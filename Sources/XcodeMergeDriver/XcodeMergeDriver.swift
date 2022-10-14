@@ -25,7 +25,7 @@ public struct XcodeMergeDriver: ParsableCommand {
         output = pathToOurVersion + pathToBaseVersion + pathToOtherVersion
         ourVersionContent = try readFile(fileName: pathToOurVersion)
         
-        print(ourVersionContent)
+//        print(ourVersionContent)
     }
     
     func readFile(fileName: String) throws -> String {
