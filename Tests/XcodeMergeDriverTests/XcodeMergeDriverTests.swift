@@ -7,7 +7,11 @@ final class XcodeMergeDriverTests: XCTestCase {
         driver.pathToOurVersion = "my-file.mrg"
         driver.pathToBaseVersion = "Hello, World!"
         driver.pathToOtherVersion = "Hello, World!"
+        driver.ourVersionContent = our
+        driver.baseVersionContent = base
+        driver.otherVersionContent = other
         try driver.run()
         XCTAssertEqual(driver.output, "my-file.mrgHello, World!Hello, World!")
     }
 }
+

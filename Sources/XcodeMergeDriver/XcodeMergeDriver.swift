@@ -22,15 +22,18 @@ public struct XcodeMergeDriver: ParsableCommand {
     mutating public func run() throws {
         
         output = pathToOurVersion + pathToBaseVersion + pathToOtherVersion
-        ourVersionContent = try readFile(fileName: pathToOurVersion)
-        baseVersionContent = try readFile(fileName: pathToBaseVersion)
-        otherVersionContent = try readFile(fileName: pathToOtherVersion)
-        print("Our =====================")
-        print(ourVersionContent)
-        print("Base =====================")
-        print(baseVersionContent)
-        print("Other =====================")
-        print(otherVersionContent)
+        if ourVersionContent.isEmpty {
+            ourVersionContent = try readFile(fileName: pathToOurVersion)
+        }
+        if baseVersionContent.isEmpty {
+            baseVersionContent = try readFile(fileName: pathToBaseVersion)
+        }
+        if otherVersionContent.isEmpty {
+            otherVersionContent = try readFile(fileName: pathToOtherVersion)
+        }
+
+        
+        
         throw MergeError.wrongFilePath
     }
     
