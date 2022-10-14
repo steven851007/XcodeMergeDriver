@@ -29,4 +29,4 @@ echo "---------"
 cat $2
 echo ""
 
-exit 0
+exit 1
