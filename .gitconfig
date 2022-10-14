@@ -1,3 +1,3 @@
 [merge "XcodeMergeDriver"]
 	name = A custom merge driver used to resolve conflicts in certain files
-	driver = ./build/arm64-apple-macosx/debug/XcodeMergeDriver %A %O %B
+	driver = XcodeMergeDriverScript.sh %A %O %B
