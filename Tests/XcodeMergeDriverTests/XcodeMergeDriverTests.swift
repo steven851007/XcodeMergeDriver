@@ -3,9 +3,11 @@ import XCTest
 
 final class XcodeMergeDriverTests: XCTestCase {
     func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(XcodeMergeDriver().text, "Hello, World!")
+        var driver = XcodeMergeDriver()
+        driver.pathToOurVersion = "my-file.mrg"
+        driver.pathToBaseVersion = "Hello, World!"
+        driver.pathToOtherVersion = "Hello, World!"
+        try driver.run()
+        XCTAssertEqual(driver.output, "my-file.mrgHello, World!Hello, World!")
     }
 }
