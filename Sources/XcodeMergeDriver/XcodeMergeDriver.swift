@@ -21,33 +21,30 @@ public struct XcodeMergeDriver: ParsableCommand {
     
     mutating public func run() throws {
         
-        
-        output = currentFile + baseFile + otherFile
-        if currentContent.isEmpty {
-            currentContent = try readFile(fileName: currentFile)
-        }
-        if baseContent.isEmpty {
-            baseContent = try readFile(fileName: baseFile)
-        }
-        if otherContent.isEmpty {
-            otherContent = try readFile(fileName: otherFile)
-        }
+        let currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
+        let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
 
         let bash: CommandExecuting = Bash()
         try bash.run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
         
+        let conflictedXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        
         throw MergeError.wrongFilePath
     }
     
-    func readFile(fileName: String) throws -> String {
+    
+    func xcodeProjectFromFile(fileName: String) throws -> XcodeProject {
 //        let filePath = "/Users/istvanbalogh/XcodeMergeDriver" + "/\(fileName)" //FileManager.default.currentDirectoryPath
 //        print(filePath)
         let fileURL = URL(fileURLWithPath: fileName)
         let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-        return fileContent
+        return try XcodeProject(content: fileContent)
     }
 }
 
 enum MergeError: Error {
     case wrongFilePath
+    case unsupported
 }
+
