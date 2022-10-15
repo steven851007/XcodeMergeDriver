@@ -8,9 +8,9 @@
 import Foundation
 
 @available(macOS 10.15, *)
-struct XcodeProject {
+struct XcodeProject: Equatable {
     
-    let content: String
+    private(set) var content: String
     var pbxBuildFile: PBXBuildFile
     var hasConflict: Bool {
         content.contains("<<<<<<<")
@@ -20,18 +20,26 @@ struct XcodeProject {
     
     init(content: String) throws {
         self.content = content
-        let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)
+        let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
         self.pbxBuildFile = try PBXBuildFile(content: PBXBuildFileContent)
-        if content.contains("<<<<<<<") && !pbxBuildFile.hasConflict {
-            throw MergeError.unsupported
+    }
+    
+    mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
+        var merged = try merged()
+        if merged.pbxBuildFile.hasConflict {
+            let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
+            let oldPbxContent = try pbxBuildFile.applying(difference)
+            content = content.replacingOccurrences(of: oldPbxContent, with: pbxBuildFile.content)
+            merged.pbxBuildFile = pbxBuildFile
+        }
+        
+        if merged.hasConflict {
+            throw MergeError.unsupported // File still has conflicts
         }
     }
     
-    mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: XcodeProject) throws {
-        if merged.pbxBuildFile.hasConflict {
-            let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
-            try pbxBuildFile.applying(difference)
-        }
+    static func == (lhs: XcodeProject, rhs: XcodeProject) -> Bool {
+        lhs.content == rhs.content && lhs.pbxBuildFile == rhs.pbxBuildFile
     }
 }
 

@@ -18,7 +18,7 @@ final class PBXBuildFileTests: XCTestCase {
         let otherChangeset = other.difference(from: base)
         try current.applying(otherChangeset)
         
-        XCTAssertEqual(current.lines, try PBXBuildFile(content: resolvedFile).lines)
+        XCTAssertEqual(current, try PBXBuildFile(content: resolvedFile))
     }
     
 }

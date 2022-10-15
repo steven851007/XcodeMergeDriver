@@ -8,9 +8,9 @@
 import Foundation
 
 @available(macOS 10.15, *)
-struct PBXBuildFile {
+struct PBXBuildFile: Equatable {
     
-    let content: String
+    private(set) var content: String
     private(set) var lines: [PBXBuildFileLine]
     var hasConflict: Bool {
         content.contains("<<<<<<<")
@@ -21,18 +21,22 @@ struct PBXBuildFile {
         return difference
     }
     
-    mutating func applying(_ difference: CollectionDifference<PBXBuildFileLine>) throws {
+    @discardableResult
+    mutating func applying(_ difference: CollectionDifference<PBXBuildFileLine>) throws -> String {
         guard let changedLines =  lines.applying(difference) else {
             throw MergeError.unsupported
         }
+        let oldContent = content
         lines = changedLines
+        content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        return oldContent
     }
     
     init(content: String?) throws {
         guard let content else {
             throw PBXBuildFileError.missingContent
         }
-        self.content = content
+        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
         self.lines = content.split(separator: "\n").map { PBXBuildFileLine(lineString: String($0)) }
     }
 }

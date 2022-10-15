@@ -26,25 +26,24 @@ public struct XcodeMergeDriver: ParsableCommand {
         var currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
         let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
-
-        try Bash().run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
         
-        let mergedXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject) {
+            try Bash().run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
+            return try xcodeProjectFromFile(fileName: currentFile)
+        }
         
-        guard mergedXcodeProject.hasConflict else { return }
-        
-        try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject, merged: mergedXcodeProject)
-        
-        throw MergeError.wrongFilePath
+        try xcodeProjectToFile(currentXcodeProject, fileName: currentFile)
     }
     
     
     func xcodeProjectFromFile(fileName: String) throws -> XcodeProject {
-//        let filePath = "/Users/istvanbalogh/XcodeMergeDriver" + "/\(fileName)" //FileManager.default.currentDirectoryPath
-//        print(filePath)
         let fileURL = URL(fileURLWithPath: fileName)
         let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
         return try XcodeProject(content: fileContent)
+    }
+    
+    func xcodeProjectToFile(_ project: XcodeProject, fileName: String) throws {
+        try project.content.write(toFile: fileName, atomically: true, encoding: .utf8)
     }
 }
 
