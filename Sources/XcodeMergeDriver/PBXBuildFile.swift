@@ -11,18 +11,18 @@ import Foundation
 struct PBXBuildFile: Equatable {
     
     private(set) var content: String
-    private(set) var lines: [PBXBuildFileLine]
+    private(set) var lines: [PBXFileLine]
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
     
-    func difference(from base: PBXBuildFile) -> CollectionDifference<PBXBuildFileLine> {
+    func difference(from base: PBXBuildFile) -> CollectionDifference<PBXFileLine> {
         let difference =  lines.difference(from: base.lines) { $0 == $1 }
         return difference
     }
     
     @discardableResult
-    mutating func applying(_ difference: CollectionDifference<PBXBuildFileLine>) throws -> String {
+    mutating func applying(_ difference: CollectionDifference<PBXFileLine>) throws -> String {
         guard let changedLines =  lines.applying(difference) else {
             throw MergeError.unsupported
         }
@@ -32,24 +32,36 @@ struct PBXBuildFile: Equatable {
         return oldContent
     }
     
-    init(content: String?) throws {
+    init(content: String?, type: PBXFileType) throws {
         guard let content else {
             throw PBXBuildFileError.missingContent
         }
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.lines = content.split(separator: "\n").map { PBXBuildFileLine(lineString: String($0)) }
+        self.lines = content.split(separator: "\n").map { PBXFileLine(lineString: String($0), type: type) }
     }
 }
 
+enum PBXFileType {
+    case build, reference
+    
+    var valueSeparator: (begin: String, end: String) {
+        switch self {
+        case .build:
+            return (begin: " /* ", end: " in ")
+        case .reference:
+            return (begin: " /* ", end: " */ ")
+        }
+    }
+}
 
-struct PBXBuildFileLine: Equatable {
+struct PBXFileLine: Equatable {
     
     let lineString: String
-    private let comparableValue: String?
+    let comparableValue: String?
     
-    init(lineString: String) {
+    init(lineString: String, type: PBXFileType = .build) {
         self.lineString = lineString
-        self.comparableValue = lineString.slice(from: " /* ", to: " in ")
+        self.comparableValue = lineString.slice(from: type.valueSeparator.begin, to: type.valueSeparator.end)
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

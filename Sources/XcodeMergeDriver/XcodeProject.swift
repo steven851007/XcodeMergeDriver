@@ -12,16 +12,20 @@ struct XcodeProject: Equatable {
     
     private(set) var content: String
     var pbxBuildFile: PBXBuildFile
+    var pbxfileReference: PBXBuildFile
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
     
     private let PBXBuildFileSectionSeparator = (begin: "/* Begin PBXBuildFile section */", end: "/* End PBXBuildFile section */")
+    private let PBXFileReferenceSectionSeparator = (begin: "/* Begin PBXFileReference section */", end: "/* End PBXFileReference section */")
     
     init(content: String) throws {
         self.content = content
         let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxBuildFile = try PBXBuildFile(content: PBXBuildFileContent)
+        self.pbxBuildFile = try PBXBuildFile(content: PBXBuildFileContent, type: .build)
+        let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.pbxfileReference = try PBXBuildFile(content: PBXBuildFileContent, type: .reference)
     }
     
     mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {

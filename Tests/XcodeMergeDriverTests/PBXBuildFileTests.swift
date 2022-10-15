@@ -11,14 +11,14 @@ import XCTest
 final class PBXBuildFileTests: XCTestCase {
     
     func test_changeSet_returnsCorrectChangeWhenLineAdded() throws {
-        let base = try PBXBuildFile(content: baseFile)
-        var current = try PBXBuildFile(content: currentFile)
-        let other = try PBXBuildFile(content: otherFile)
+        let base = try PBXBuildFile(content: baseFile, type: .build)
+        var current = try PBXBuildFile(content: currentFile, type: .build)
+        let other = try PBXBuildFile(content: otherFile, type: .build)
         
         let otherChangeset = other.difference(from: base)
         try current.applying(otherChangeset)
         
-        XCTAssertEqual(current, try PBXBuildFile(content: resolvedFile))
+        XCTAssertEqual(current, try PBXBuildFile(content: resolvedFile, type: .build))
     }
     
 }
