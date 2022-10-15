@@ -37,6 +37,13 @@ struct XcodeProject: Equatable {
             merged.pbxBuildFile = pbxBuildFile
         }
         
+        if merged.pbxfileReference.hasConflict {
+            let difference = other.pbxfileReference.difference(from: base.pbxfileReference)
+            let oldPbxReferenceContent = try pbxfileReference.applying(difference)
+            content = content.replacingOccurrences(of: oldPbxReferenceContent, with: pbxfileReference.content)
+            merged.pbxfileReference = pbxfileReference
+        }
+        
         if merged.hasConflict {
             throw MergeError.unsupported // File still has conflicts
         }
