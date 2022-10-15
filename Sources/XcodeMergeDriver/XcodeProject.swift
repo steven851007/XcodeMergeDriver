@@ -7,10 +7,11 @@
 
 import Foundation
 
+@available(macOS 10.15, *)
 struct XcodeProject {
     
     let content: String
-    let pbxBuildFile: PBXBuildFile
+    var pbxBuildFile: PBXBuildFile
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
@@ -25,38 +26,15 @@ struct XcodeProject {
             throw MergeError.unsupported
         }
     }
-}
-
-struct PBXBuildFile {
     
-    let content: String
-    let lines: [PBXBuildFileLine]
-    var hasConflict: Bool {
-        content.contains("<<<<<<<")
-    }
-    
-    init(content: String?) throws {
-        guard let content else {
-            throw PBXBuildFileError.missingContent
+    mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: XcodeProject) throws {
+        if merged.pbxBuildFile.hasConflict {
+            let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
+            try pbxBuildFile.applying(difference)
         }
-        self.content = content
-        self.lines = content.split(separator: "\n").map { PBXBuildFileLine(lineString: String($0)) }
     }
 }
 
-struct PBXBuildFileLine {
-    
-    let lineString: String
-    
-    init(lineString: String) {
-        self.lineString = lineString
-    }
-}
-
-
-enum PBXBuildFileError: Error {
-    case missingContent
-}
 
 extension String {
     

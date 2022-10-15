@@ -1,6 +1,7 @@
 import ArgumentParser
 import Foundation
 
+@available(macOS 10.15, *)
 @main
 public struct XcodeMergeDriver: ParsableCommand {
     @Argument(help: "filepath to our version of the conflicted file")
@@ -17,18 +18,22 @@ public struct XcodeMergeDriver: ParsableCommand {
     var otherContent: String = ""
     
     var output: String = ""
+    
     public init() { }
     
     mutating public func run() throws {
         
-        let currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        var currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
         let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
 
-        let bash: CommandExecuting = Bash()
-        try bash.run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
+        try Bash().run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
         
-        let conflictedXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        let mergedXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        
+        guard mergedXcodeProject.hasConflict else { return }
+        
+        try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject, merged: mergedXcodeProject)
         
         throw MergeError.wrongFilePath
     }
