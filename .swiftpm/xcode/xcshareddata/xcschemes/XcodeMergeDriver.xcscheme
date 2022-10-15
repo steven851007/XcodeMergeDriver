@@ -77,15 +77,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "my-file.mrg"
+            argument = "/Users/istvanbalogh/XcodeMergeDriver/our.pbxproj"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "hello"
+            argument = "/Users/istvanbalogh/XcodeMergeDriver/base.pbxproj"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "world"
+            argument = "/Users/istvanbalogh/XcodeMergeDriver/other.pbxproj"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

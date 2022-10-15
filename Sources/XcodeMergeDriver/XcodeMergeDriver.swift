@@ -4,43 +4,45 @@ import Foundation
 @main
 public struct XcodeMergeDriver: ParsableCommand {
     @Argument(help: "filepath to our version of the conflicted file")
-    var pathToOurVersion: String
+    var currentFile: String
     
     @Argument(help: "filepath to the base version of the file")
-    var pathToBaseVersion: String
+    var baseFile: String
     
     @Argument(help: "filepath to the other branches version of the file")
-    var pathToOtherVersion: String
+    var otherFile: String
     
-    var ourVersionContent: String = ""
-    var baseVersionContent: String = ""
-    var otherVersionContent: String = ""
+    var currentContent: String = ""
+    var baseContent: String = ""
+    var otherContent: String = ""
     
     var output: String = ""
     public init() { }
     
     mutating public func run() throws {
         
-        output = pathToOurVersion + pathToBaseVersion + pathToOtherVersion
-        if ourVersionContent.isEmpty {
-            ourVersionContent = try readFile(fileName: pathToOurVersion)
+        
+        output = currentFile + baseFile + otherFile
+        if currentContent.isEmpty {
+            currentContent = try readFile(fileName: currentFile)
         }
-        if baseVersionContent.isEmpty {
-            baseVersionContent = try readFile(fileName: pathToBaseVersion)
+        if baseContent.isEmpty {
+            baseContent = try readFile(fileName: baseFile)
         }
-        if otherVersionContent.isEmpty {
-            otherVersionContent = try readFile(fileName: pathToOtherVersion)
+        if otherContent.isEmpty {
+            otherContent = try readFile(fileName: otherFile)
         }
 
-        
+        let bash: CommandExecuting = Bash()
+        try bash.run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
         
         throw MergeError.wrongFilePath
     }
     
     func readFile(fileName: String) throws -> String {
-        let filePath = "/Users/istvanbalogh/XcodeMergeDriver" + "/\(fileName)" //FileManager.default.currentDirectoryPath
-        print(filePath)
-        let fileURL = URL(fileURLWithPath: filePath)
+//        let filePath = "/Users/istvanbalogh/XcodeMergeDriver" + "/\(fileName)" //FileManager.default.currentDirectoryPath
+//        print(filePath)
+        let fileURL = URL(fileURLWithPath: fileName)
         let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
         return fileContent
     }
