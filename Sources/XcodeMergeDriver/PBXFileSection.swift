@@ -8,7 +8,7 @@
 import Foundation
 
 @available(macOS 10.15, *)
-struct PBXBuildFile: Equatable {
+struct PBXFileSection: Equatable {
     
     private(set) var content: String
     private(set) var lines: [PBXFileLine]
@@ -16,7 +16,7 @@ struct PBXBuildFile: Equatable {
         content.contains("<<<<<<<")
     }
     
-    func difference(from base: PBXBuildFile) -> CollectionDifference<PBXFileLine> {
+    func difference(from base: PBXFileSection) -> CollectionDifference<PBXFileLine> {
         let difference =  lines.difference(from: base.lines) { $0 == $1 }
         return difference
     }

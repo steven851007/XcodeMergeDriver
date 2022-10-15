@@ -11,8 +11,8 @@ import Foundation
 struct XcodeProject: Equatable {
     
     private(set) var content: String
-    var pbxBuildFile: PBXBuildFile
-    var pbxfileReference: PBXBuildFile
+    var pbxBuildFile: PBXFileSection
+    var pbxfileReference: PBXFileSection
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
@@ -23,9 +23,9 @@ struct XcodeProject: Equatable {
     init(content: String) throws {
         self.content = content
         let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxBuildFile = try PBXBuildFile(content: PBXBuildFileContent, type: .build)
+        self.pbxBuildFile = try PBXFileSection(content: PBXBuildFileContent, type: .build)
         let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxfileReference = try PBXBuildFile(content: PBXBuildFileContent, type: .reference)
+        self.pbxfileReference = try PBXFileSection(content: PBXFileReferenceContent, type: .reference)
     }
     
     mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {

@@ -8,17 +8,17 @@
 import XCTest
 @testable import XcodeMergeDriver
 
-final class PBXBuildFileTests: XCTestCase {
+final class PBXFileSectionTests: XCTestCase {
     
     func test_changeSet_returnsCorrectChangeWhenLineAdded() throws {
-        let base = try PBXBuildFile(content: baseFile, type: .build)
-        var current = try PBXBuildFile(content: currentFile, type: .build)
-        let other = try PBXBuildFile(content: otherFile, type: .build)
+        let base = try PBXFileSection(content: baseFile, type: .build)
+        var current = try PBXFileSection(content: currentFile, type: .build)
+        let other = try PBXFileSection(content: otherFile, type: .build)
         
         let otherChangeset = other.difference(from: base)
         try current.applying(otherChangeset)
         
-        XCTAssertEqual(current, try PBXBuildFile(content: resolvedFile, type: .build))
+        XCTAssertEqual(current, try PBXFileSection(content: resolvedFile, type: .build))
     }
     
 }
