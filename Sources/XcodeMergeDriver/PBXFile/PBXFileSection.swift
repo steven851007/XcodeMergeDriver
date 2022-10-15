@@ -34,42 +34,9 @@ struct PBXFileSection: Equatable {
     
     init(content: String?, type: PBXFileType) throws {
         guard let content else {
-            throw PBXBuildFileError.missingContent
+            throw MergeError.parsingError
         }
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
         self.lines = content.split(separator: "\n").map { PBXFileLine(lineString: String($0), type: type) }
     }
-}
-
-enum PBXFileType {
-    case build, reference
-    
-    var valueSeparator: (begin: String, end: String) {
-        switch self {
-        case .build:
-            return (begin: " /* ", end: " in ")
-        case .reference:
-            return (begin: " /* ", end: " */ ")
-        }
-    }
-}
-
-struct PBXFileLine: Equatable {
-    
-    let lineString: String
-    let comparableValue: String?
-    
-    init(lineString: String, type: PBXFileType = .build) {
-        self.lineString = lineString
-        self.comparableValue = lineString.slice(from: type.valueSeparator.begin, to: type.valueSeparator.end)
-    }
-    
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.comparableValue == rhs.comparableValue
-    }
-}
-
-
-enum PBXBuildFileError: Error {
-    case missingContent
 }

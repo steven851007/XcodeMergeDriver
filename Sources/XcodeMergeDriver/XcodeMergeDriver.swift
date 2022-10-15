@@ -50,5 +50,6 @@ public struct XcodeMergeDriver: ParsableCommand {
 enum MergeError: Error {
     case wrongFilePath
     case unsupported
+    case parsingError
 }
 
