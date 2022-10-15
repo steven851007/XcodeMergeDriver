@@ -13,12 +13,14 @@ struct XcodeProject: Equatable {
     private(set) var content: String
     var pbxBuildFile: PBXFileSection
     var pbxfileReference: PBXFileSection
+    var pbxGroupSection: PBXGroupSection
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
     
     private let PBXBuildFileSectionSeparator = (begin: "/* Begin PBXBuildFile section */", end: "/* End PBXBuildFile section */")
     private let PBXFileReferenceSectionSeparator = (begin: "/* Begin PBXFileReference section */", end: "/* End PBXFileReference section */")
+    private let PBXGroupSectionSeparator = (begin: "/* Begin PBXGroup section */", end: "/* End PBXGroup section */")
     
     init(content: String) throws {
         self.content = content
@@ -26,6 +28,8 @@ struct XcodeProject: Equatable {
         self.pbxBuildFile = try PBXFileSection(content: PBXBuildFileContent, type: .build)
         let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
         self.pbxfileReference = try PBXFileSection(content: PBXFileReferenceContent, type: .reference)
+        let PBXGroupSectionContent = content.slice(from: PBXGroupSectionSeparator.begin, to: PBXGroupSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.pbxGroupSection = try PBXGroupSection(content: PBXGroupSectionContent)
     }
     
     mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
