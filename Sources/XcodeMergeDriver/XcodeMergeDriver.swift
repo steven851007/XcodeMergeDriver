@@ -13,12 +13,6 @@ public struct XcodeMergeDriver: ParsableCommand {
     @Argument(help: "filepath to the other branches version of the file")
     var otherFile: String
     
-    var currentContent: String = ""
-    var baseContent: String = ""
-    var otherContent: String = ""
-    
-    var output: String = ""
-    
     public init() { }
     
     mutating public func run() throws {
