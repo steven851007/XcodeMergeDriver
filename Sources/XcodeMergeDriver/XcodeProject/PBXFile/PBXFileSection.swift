@@ -10,11 +10,6 @@ import Foundation
 @available(macOS 10.15, *)
 struct PBXFileSection: Equatable {
     
-    private(set) var content: String
-    private(set) var lines: [PBXFileLine]
-    var hasConflict: Bool {
-        content.contains("<<<<<<<")
-    }
     static let buildFileSectionSeparator = Separator(begin: "/* Begin PBXBuildFile section */", end: "/* End PBXBuildFile section */")
     static let fileReferenceSectionSeparator = Separator(begin: "/* Begin PBXFileReference section */", end: "/* End PBXFileReference section */")
     static func separator(for type: PBXFileType) -> Separator {
@@ -24,6 +19,20 @@ struct PBXFileSection: Equatable {
         case .reference:
             return fileReferenceSectionSeparator
         }
+    }
+    
+    private(set) var content: String
+    private(set) var lines: [PBXFileLine]
+    var hasConflict: Bool {
+        content.contains("<<<<<<<")
+    }
+    
+    init(content: String?, type: PBXFileType) throws {
+        guard let content = content?.sliceBetween(Self.separator(for: type)) else {
+            throw MergeError.parsingError
+        }
+        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.lines = self.content.split(separator: "\n").map { PBXFileLine(lineString: String($0), type: type) }
     }
     
     func difference(from base: PBXFileSection) -> CollectionDifference<PBXFileLine> {
@@ -37,13 +46,5 @@ struct PBXFileSection: Equatable {
         }
         lines = changedLines
         content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
-    init(content: String?, type: PBXFileType) throws {
-        guard let content = content?.sliceBetween(Self.separator(for: type)) else {
-            throw MergeError.parsingError
-        }
-        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.lines = self.content.split(separator: "\n").map { PBXFileLine(lineString: String($0), type: type) }
     }
 }

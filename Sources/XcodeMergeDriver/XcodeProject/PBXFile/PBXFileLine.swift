@@ -7,19 +7,6 @@
 
 import Foundation
 
-enum PBXFileType {
-    case build, reference
-    
-    var valueSeparator: Separator {
-        switch self {
-        case .build:
-            return Separator(begin: " /* ", end: " in ")
-        case .reference:
-            return Separator(begin: " /* ", end: " */ ")
-        }
-    }
-}
-
 struct PBXFileLine: Equatable {
     
     let lineString: String
