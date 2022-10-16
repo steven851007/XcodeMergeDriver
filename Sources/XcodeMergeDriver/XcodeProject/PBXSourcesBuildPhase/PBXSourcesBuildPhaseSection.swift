@@ -26,13 +26,13 @@ class PBXSourcesBuildPhaseSection: Equatable {
     }
     
     func mergeChanges(from base: PBXSourcesBuildPhaseSection, to other: PBXSourcesBuildPhaseSection, merged: PBXSourcesBuildPhaseSection) throws {
-        try merged.buildPhases.enumerated().forEach { conflictGroupSequence in
+        merged.buildPhases.enumerated().forEach { conflictGroupSequence in
             if conflictGroupSequence.element.hasConflict {
                 let sameBaseGroup = base.buildPhases[conflictGroupSequence.offset]
                 let sameOtherGroup = other.buildPhases[conflictGroupSequence.offset]
                 let sameCurrentGroup = buildPhases[conflictGroupSequence.offset]
                 let difference = sameOtherGroup.difference(from: sameBaseGroup)
-                let oldGroupContent = try sameCurrentGroup.applying(difference)
+                let oldGroupContent = sameCurrentGroup.applying(difference)
                 content = content.replacingOccurrences(of: oldGroupContent, with: sameCurrentGroup.content)
             }
         }

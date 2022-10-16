@@ -56,14 +56,14 @@ class XcodeProject: Equatable {
         let merged = try merged()
         if merged.pbxBuildFile.hasConflict {
             let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
-            try pbxBuildFile.applying(difference)
+            pbxBuildFile.applying(difference)
             updatePbxBuildFileContent(with: pbxBuildFile)
             merged.updatePbxBuildFileContent(with: pbxBuildFile)
         }
         
         if merged.pbxfileReference.hasConflict {
             let difference = other.pbxfileReference.difference(from: base.pbxfileReference)
-            try pbxfileReference.applying(difference)
+            pbxfileReference.applying(difference)
             updatePbxFileReferenceContent(with: pbxfileReference)
             merged.updatePbxFileReferenceContent(with: pbxfileReference)
         }

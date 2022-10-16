@@ -35,13 +35,19 @@ class PBXGroup: Equatable {
     }
 
     @discardableResult
-    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) throws -> String {
+    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
         let oldContent = content
         let oldChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let changedChildren = children.applying(difference) else {
-            throw MergeError.unsupported
+        difference.forEach { change in
+            switch change {
+              case let .remove(_, element, _):
+                if let index = children.firstIndex(of: element) {
+                    children.remove(at: index)
+                }
+              case let .insert(offset, newElement, _):
+                children.insert(newElement, at: offset)
+              }
         }
-        children = changedChildren
         let newChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: oldChildren, with: newChildren)
         return oldContent

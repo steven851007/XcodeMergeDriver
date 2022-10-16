@@ -26,13 +26,13 @@ final class GroupAddedAndFileMovedToGroupTests: XCTestCase {
         try super.tearDownWithError()
     }
     
-//    func test_merge_groupAddedAndFileMoved() throws {
-//        var driver = makeSUT()
-//        
-//        try driver.run()
-//        
-//        XCTAssert(FileManager().contentsEqual(atPath: resolvedPath, andPath: outputPath))
-//    }
+    func test_merge_groupAddedAndFileMoved() throws {
+        var driver = makeSUT()
+        
+        try driver.run()
+        
+        XCTAssert(FileManager().contentsEqual(atPath: resolvedPath, andPath: outputPath))
+    }
     
     private func makeSUT() -> XcodeMergeDriver {
         var driver = XcodeMergeDriver()

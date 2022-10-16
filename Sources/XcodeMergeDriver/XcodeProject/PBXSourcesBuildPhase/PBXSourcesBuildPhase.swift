@@ -34,13 +34,20 @@ class PBXSourcesBuildPhase: Equatable {
     }
     
     @discardableResult
-    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) throws -> String {
+    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
         let oldContent = content
         let oldFiles = files.map { $0.content }.joined(separator: "\n")
-        guard let changedFiles = files.applying(difference) else {
-            throw MergeError.unsupported
+        difference.forEach { change in
+            switch change {
+              case let .remove(_, element, _):
+                if let index = files.firstIndex(of: element) {
+                    files.remove(at: index)
+                }
+              case let .insert(offset, newElement, _):
+                files.insert(newElement, at: offset)
+              }
         }
-        files = changedFiles
+        
         let newFiles = files.map { $0.content }.joined(separator: "\n")
         content = content.replacingOccurrences(of: oldFiles, with: newFiles)
         return oldContent

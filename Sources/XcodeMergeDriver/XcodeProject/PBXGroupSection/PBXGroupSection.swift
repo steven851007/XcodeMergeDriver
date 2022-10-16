@@ -41,7 +41,7 @@ class PBXGroupSection: Equatable {
         let difference = other.groups.difference(from: base.groups) { $0.name == $1.name }
         let compbinedGroups = try applyGroupDifference(difference)
         
-        try compbinedGroups.forEach { conflictGroup in
+        compbinedGroups.forEach { conflictGroup in
             if
                let sameBaseGroup = base.groupWithName(conflictGroup.name),
                let sameOtherGroup = other.groupWithName(conflictGroup.name),
@@ -49,7 +49,7 @@ class PBXGroupSection: Equatable {
             {
                 let difference = sameOtherGroup.difference(from: sameBaseGroup)
                 if !difference.isEmpty {
-                    let oldGroupContent = try sameCurrentGroup.applying(difference)
+                    let oldGroupContent = sameCurrentGroup.applying(difference)
                     content = content.replacingOccurrences(of: oldGroupContent, with: sameCurrentGroup.content)
                 }
             }

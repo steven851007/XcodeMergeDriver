@@ -103,9 +103,8 @@
             children = (
                 87BBC76F28F9E1AB00380008 /* AppDelegate.swift */,
                 87BBC77128F9E1AB00380008 /* SceneDelegate.swift */,
-                87BBC77328F9E1AB00380008 /* ViewController.swift */,
-                87BBC7BF28FC382900380008 /* BGroup */,
-                87BBC7C028FC4B0500380008 /* Main */,
+                87BBC7C528FC61D000380008 /* Main group */,
+                87BBC7C428FC61BD00380008 /* B group */,
                 87BBC77828F9E1AD00380008 /* Assets.xcassets */,
                 87BBC77A28F9E1AD00380008 /* LaunchScreen.storyboard */,
                 87BBC77D28F9E1AD00380008 /* Info.plist */,
@@ -130,20 +129,21 @@
             path = SampleAppUITests;
             sourceTree = "<group>";
         };
-        87BBC7BF28FC382900380008 /* BGroup */ = {
+        87BBC7C428FC61BD00380008 /* B group */ = {
             isa = PBXGroup;
             children = (
                 87BBC7AD28F9F7FA00380008 /* BViewController.swift */,
             );
-            path = BGroup;
+            path = "B group";
             sourceTree = "<group>";
         };
-        87BBC7C028FC4B0500380008 /* Main */ = {
+        87BBC7C528FC61D000380008 /* Main group */ = {
             isa = PBXGroup;
             children = (
+                87BBC77328F9E1AB00380008 /* ViewController.swift */,
                 87BBC77528F9E1AB00380008 /* Main.storyboard */,
             );
-            path = Main;
+            path = "Main group";
             sourceTree = "<group>";
         };
 /* End PBXGroup section */
