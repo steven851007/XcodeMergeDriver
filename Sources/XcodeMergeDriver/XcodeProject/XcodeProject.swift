@@ -57,32 +57,30 @@ class XcodeProject: Equatable {
         if merged.pbxBuildFile.hasConflict {
             let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
             pbxBuildFile.applying(difference)
-            updatePbxBuildFileContent(with: pbxBuildFile)
             merged.updatePbxBuildFileContent(with: pbxBuildFile)
         }
         
         if merged.pbxfileReference.hasConflict {
             let difference = other.pbxfileReference.difference(from: base.pbxfileReference)
             pbxfileReference.applying(difference)
-            updatePbxFileReferenceContent(with: pbxfileReference)
             merged.updatePbxFileReferenceContent(with: pbxfileReference)
         }
         
         if merged.pbxGroupSection.hasConflict {
             try pbxGroupSection.mergeChanges(from: base.pbxGroupSection, to: other.pbxGroupSection, merged: merged.pbxGroupSection)
-            updatePbxGroupSectionContent(with: pbxGroupSection)
             merged.updatePbxGroupSectionContent(with: pbxGroupSection)
         }
         
         if merged.pbxSourcesBuildPhaseSection.hasConflict {
             try pbxSourcesBuildPhaseSection.mergeChanges(from: base.pbxSourcesBuildPhaseSection, to: other.pbxSourcesBuildPhaseSection, merged: merged.pbxSourcesBuildPhaseSection)
-            updatePbxSourcesBuildPhaseSectionContent(with: pbxSourcesBuildPhaseSection)
             merged.updatePbxSourcesBuildPhaseSectionContent(with: pbxSourcesBuildPhaseSection)
         }
         
         if merged.hasConflict {
             throw MergeError.unsupported // File still has conflicts
         }
+        
+        content = merged.content
     }
     
     static func == (lhs: XcodeProject, rhs: XcodeProject) -> Bool {
