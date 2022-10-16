@@ -45,7 +45,8 @@ class PBXGroup: Equatable {
                     children.remove(at: index)
                 }
               case let .insert(offset, newElement, _):
-                children.insert(newElement, at: offset)
+                let index = offset > children.endIndex ? children.endIndex : offset
+                children.insert(newElement, at: index)
               }
         }
         let newChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)

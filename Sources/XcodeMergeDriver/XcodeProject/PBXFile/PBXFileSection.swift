@@ -48,7 +48,8 @@ struct PBXFileSection: Equatable {
                     lines.remove(at: index)
                 }
               case let .insert(offset, newElement, _):
-                lines.insert(newElement, at: offset)
+                let index = offset > lines.endIndex ? lines.endIndex : offset
+                lines.insert(newElement, at: index)
               }
         }
         content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)

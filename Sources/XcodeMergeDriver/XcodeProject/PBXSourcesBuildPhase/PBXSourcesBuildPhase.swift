@@ -44,7 +44,8 @@ class PBXSourcesBuildPhase: Equatable {
                     files.remove(at: index)
                 }
               case let .insert(offset, newElement, _):
-                files.insert(newElement, at: offset)
+                let index = offset > files.endIndex ? files.endIndex : offset
+                files.insert(newElement, at: index)
               }
         }
         
