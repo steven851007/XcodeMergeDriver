@@ -23,11 +23,11 @@ enum PBXFileType {
 struct PBXFileLine: Equatable {
     
     let lineString: String
-    let comparableValue: String?
+    let comparableValue: String
     
     init(lineString: String, type: PBXFileType = .build) {
         self.lineString = lineString
-        self.comparableValue = lineString.slice(from: type.valueSeparator.begin, to: type.valueSeparator.end)
+        self.comparableValue = String(lineString.slice(from: type.valueSeparator.begin, to: type.valueSeparator.end) ?? "")
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

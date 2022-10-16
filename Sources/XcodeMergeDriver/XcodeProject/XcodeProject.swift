@@ -82,10 +82,10 @@ class XcodeProject: Equatable {
 
 extension String {
     
-    func slice(from: String, to: String) -> String? {
+    func slice(from: String, to: String) -> Substring? {
         return (range(of: from)?.upperBound).flatMap { substringFrom in
             (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
-                String(self[substringFrom..<substringTo])
+                self[substringFrom..<substringTo]
             }
         }
     }

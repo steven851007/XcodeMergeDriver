@@ -26,7 +26,7 @@ class PBXGroup: Equatable {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
         self.children = try children.map { try PBXGroupChildLine(content: $0) }
-        self.name = self.content.slice(from: " /* ", to: " */ = {") ?? "Main"
+        self.name = String(self.content.slice(from: " /* ", to: " */ = {") ?? "Main")
     }
     
     func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {
