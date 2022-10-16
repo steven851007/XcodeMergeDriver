@@ -31,7 +31,7 @@ final class PBXGroupSectionTests: XCTestCase {
         XCTAssert(conflict.groups[2].hasConflict)
     }
     
-    func test() throws {
+    func test_mergeChanges_correctlyMergesChanges() throws {
         let base = try PBXGroupSection(content: baseGroup)
         let current = try PBXGroupSection(content: currentGroup)
         let other = try PBXGroupSection(content: otherGroup)
