@@ -31,7 +31,7 @@ final class XcodeProjectTests: XCTestCase {
     func test_merge_throwsWithConflictsNotSupported() throws {
         let base = try XcodeProject(content: base)
         let other = try XcodeProject(content: other)
-        var current = try XcodeProject(content: our)
+        let current = try XcodeProject(content: our)
         
         XCTAssertThrowsError(try current.mergeChanges(from: base, to: other) {
             try XcodeProject(content: unsupported)
@@ -41,13 +41,13 @@ final class XcodeProjectTests: XCTestCase {
     func test_merge() throws {
         let base = try XcodeProject(content: base)
         let other = try XcodeProject(content: other)
-        var current = try XcodeProject(content: our)
+        let current = try XcodeProject(content: our)
         
-//        try current.mergeChanges(from: base, to: other) {
-//            try XcodeProject(content: merged)
-//        }
-//
-//        XCTAssertEqual(current, try XcodeProject(content: resolved))
+        try current.mergeChanges(from: base, to: other) {
+            try XcodeProject(content: merged)
+        }
+
+        XCTAssertEqual(current.content, try XcodeProject(content: resolved).content)
     }
 }
 
@@ -724,6 +724,7 @@ private let resolved = """
         87BBC78C28F9E1AD00380008 /* SampleAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
         87BBC79028F9E1AD00380008 /* SampleAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAppUITests.swift; sourceTree = "<group>"; };
         87BBC79228F9E1AD00380008 /* SampleAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
+        87BBC7AB28F9F7E700380008 /* AViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AViewController.swift; sourceTree = "<group>"; };
         87BBC7AD28F9F7FA00380008 /* BViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -778,6 +779,7 @@ private let resolved = """
                 87BBC76F28F9E1AB00380008 /* AppDelegate.swift */,
                 87BBC77128F9E1AB00380008 /* SceneDelegate.swift */,
                 87BBC77328F9E1AB00380008 /* ViewController.swift */,
+                87BBC7AB28F9F7E700380008 /* AViewController.swift */,
                 87BBC7AD28F9F7FA00380008 /* BViewController.swift */,
                 87BBC77528F9E1AB00380008 /* Main.storyboard */,
                 87BBC77828F9E1AD00380008 /* Assets.xcassets */,

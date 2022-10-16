@@ -17,7 +17,7 @@ public struct XcodeMergeDriver: ParsableCommand {
     
     mutating public func run() throws {
         
-        var currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
+        let currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
         let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
         

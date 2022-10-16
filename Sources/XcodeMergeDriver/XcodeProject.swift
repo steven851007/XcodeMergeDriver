@@ -8,7 +8,7 @@
 import Foundation
 
 @available(macOS 10.15, *)
-struct XcodeProject: Equatable {
+class XcodeProject: Equatable {
     
     private(set) var content: String
     var pbxBuildFile: PBXFileSection
@@ -32,20 +32,41 @@ struct XcodeProject: Equatable {
         self.pbxGroupSection = try PBXGroupSection(content: PBXGroupSectionContent)
     }
     
-    mutating func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
-        var merged = try merged()
+    func updatePbxBuildFileContent(with pbxBuildFile: PBXFileSection) {
+        let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXBuildFileContent, with: pbxBuildFile.content)
+    }
+    
+    func updatePbxFileReferenceContent(with pbxfileReference: PBXFileSection) {
+        let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXFileReferenceContent, with: pbxfileReference.content)
+    }
+    
+    func updatePbxGroupSectionContent(with pbxGroupSection: PBXGroupSection) {
+        let PBXGroupSectionContent = content.slice(from: PBXGroupSectionSeparator.begin, to: PBXGroupSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXGroupSectionContent, with: pbxGroupSection.content)
+    }
+    
+    func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
+        let merged = try merged()
         if merged.pbxBuildFile.hasConflict {
             let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
-            let oldPbxContent = try pbxBuildFile.applying(difference)
-            content = content.replacingOccurrences(of: oldPbxContent, with: pbxBuildFile.content)
-            merged.pbxBuildFile = pbxBuildFile
+            try pbxBuildFile.applying(difference)
+            updatePbxBuildFileContent(with: pbxBuildFile)
+            merged.updatePbxBuildFileContent(with: pbxBuildFile)
         }
         
         if merged.pbxfileReference.hasConflict {
             let difference = other.pbxfileReference.difference(from: base.pbxfileReference)
-            let oldPbxReferenceContent = try pbxfileReference.applying(difference)
-            content = content.replacingOccurrences(of: oldPbxReferenceContent, with: pbxfileReference.content)
-            merged.pbxfileReference = pbxfileReference
+            try pbxfileReference.applying(difference)
+            updatePbxFileReferenceContent(with: pbxfileReference)
+            merged.updatePbxFileReferenceContent(with: pbxfileReference)
+        }
+        
+        if merged.pbxGroupSection.hasConflict {
+            try pbxGroupSection.mergeChanges(from: base.pbxGroupSection, to: other.pbxGroupSection, merged: merged.pbxGroupSection)
+            updatePbxGroupSectionContent(with: pbxGroupSection)
+            merged.updatePbxGroupSectionContent(with: pbxGroupSection)
         }
         
         if merged.hasConflict {
@@ -54,7 +75,7 @@ struct XcodeProject: Equatable {
     }
     
     static func == (lhs: XcodeProject, rhs: XcodeProject) -> Bool {
-        lhs.content == rhs.content && lhs.pbxBuildFile == rhs.pbxBuildFile
+        lhs.content == rhs.content
     }
 }
 

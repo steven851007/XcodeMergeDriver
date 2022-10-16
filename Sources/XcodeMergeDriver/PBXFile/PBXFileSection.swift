@@ -21,15 +21,12 @@ struct PBXFileSection: Equatable {
         return difference
     }
     
-    @discardableResult
-    mutating func applying(_ difference: CollectionDifference<PBXFileLine>) throws -> String {
+    mutating func applying(_ difference: CollectionDifference<PBXFileLine>) throws{
         guard let changedLines = lines.applying(difference) else {
             throw MergeError.unsupported
         }
-        let oldContent = content
         lines = changedLines
         content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-        return oldContent
     }
     
     init(content: String?, type: PBXFileType) throws {
