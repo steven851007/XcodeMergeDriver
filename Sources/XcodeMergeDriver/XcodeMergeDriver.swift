@@ -13,9 +13,15 @@ public struct XcodeMergeDriver: ParsableCommand {
     @Argument(help: "filepath to the other branches version of the file")
     var otherFile: String
     
+    var outputFile: String?
+    
     public init() { }
     
     mutating public func run() throws {
+        let currentFile = FileManager().currentDirectoryPath + currentFile
+        let baseFile = FileManager().currentDirectoryPath + baseFile
+        let otherFile = FileManager().currentDirectoryPath + otherFile
+        let outputFile = FileManager().currentDirectoryPath + (outputFile ?? currentFile)
         
         let currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
@@ -26,7 +32,7 @@ public struct XcodeMergeDriver: ParsableCommand {
             return try xcodeProjectFromFile(fileName: currentFile)
         }
         
-        try xcodeProjectToFile(currentXcodeProject, fileName: currentFile)
+        try xcodeProjectToFile(currentXcodeProject, fileName: outputFile)
     }
     
     
