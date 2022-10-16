@@ -17,6 +17,8 @@
         87BBC79128F9E1AD00380008 /* SampleAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BBC79028F9E1AD00380008 /* SampleAppUITests.swift */; };
         87BBC79328F9E1AD00380008 /* SampleAppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BBC79228F9E1AD00380008 /* SampleAppUITestsLaunchTests.swift */; };
         87BBC7AE28F9F7FA00380008 /* BViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BBC7AD28F9F7FA00380008 /* BViewController.swift */; };
+        87BBC7B528FBFC4E00380008 /* CViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BBC7B328FBFC4E00380008 /* CViewController.swift */; };
+        87BBC7B628FBFC4E00380008 /* CViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87BBC7B428FBFC4E00380008 /* CViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,8 @@
         87BBC79028F9E1AD00380008 /* SampleAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAppUITests.swift; sourceTree = "<group>"; };
         87BBC79228F9E1AD00380008 /* SampleAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
         87BBC7AD28F9F7FA00380008 /* BViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BViewController.swift; sourceTree = "<group>"; };
+        87BBC7B328FBFC4E00380008 /* CViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CViewController.swift; sourceTree = "<group>"; };
+        87BBC7B428FBFC4E00380008 /* CViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,8 @@
                 87BBC77128F9E1AB00380008 /* SceneDelegate.swift */,
                 87BBC77328F9E1AB00380008 /* ViewController.swift */,
                 87BBC7AD28F9F7FA00380008 /* BViewController.swift */,
+                87BBC7B328FBFC4E00380008 /* CViewController.swift */,
+                87BBC7B428FBFC4E00380008 /* CViewController.xib */,
                 87BBC77528F9E1AB00380008 /* Main.storyboard */,
                 87BBC77828F9E1AD00380008 /* Assets.xcassets */,
                 87BBC77A28F9E1AD00380008 /* LaunchScreen.storyboard */,
@@ -236,6 +242,7 @@
             files = (
                 87BBC77C28F9E1AD00380008 /* LaunchScreen.storyboard in Resources */,
                 87BBC77928F9E1AD00380008 /* Assets.xcassets in Resources */,
+                87BBC7B628FBFC4E00380008 /* CViewController.xib in Resources */,
                 87BBC77728F9E1AB00380008 /* Main.storyboard in Resources */,
             );
             runOnlyForDeploymentPostprocessing = 0;
@@ -263,6 +270,7 @@
             files = (
                 87BBC77428F9E1AB00380008 /* ViewController.swift in Sources */,
                 87BBC7AE28F9F7FA00380008 /* BViewController.swift in Sources */,
+                87BBC7B528FBFC4E00380008 /* CViewController.swift in Sources */,
                 87BBC77028F9E1AB00380008 /* AppDelegate.swift in Sources */,
                 87BBC77228F9E1AB00380008 /* SceneDelegate.swift in Sources */,
             );
