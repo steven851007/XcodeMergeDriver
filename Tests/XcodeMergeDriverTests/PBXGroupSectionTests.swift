@@ -277,6 +277,7 @@ private let conflictGroup = """
 """
 
 private let baseGroup = """
+/* Begin PBXGroup section */
         87BBC76328F9E1AB00380008 = {
             isa = PBXGroup;
             children = (
@@ -328,4 +329,5 @@ private let baseGroup = """
             path = SampleAppUITests;
             sourceTree = "<group>";
         };
+/* End PBXGroup section */
 """

@@ -10,12 +10,12 @@ import Foundation
 enum PBXFileType {
     case build, reference
     
-    var valueSeparator: (begin: String, end: String) {
+    var valueSeparator: Separator {
         switch self {
         case .build:
-            return (begin: " /* ", end: " in ")
+            return Separator(begin: " /* ", end: " in ")
         case .reference:
-            return (begin: " /* ", end: " */ ")
+            return Separator(begin: " /* ", end: " */ ")
         }
     }
 }
@@ -27,7 +27,7 @@ struct PBXFileLine: Equatable {
     
     init(lineString: String, type: PBXFileType = .build) {
         self.lineString = lineString
-        self.comparableValue = String(lineString.slice(from: type.valueSeparator.begin, to: type.valueSeparator.end) ?? "")
+        self.comparableValue = String(lineString.sliceBetween(type.valueSeparator) ?? "")
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

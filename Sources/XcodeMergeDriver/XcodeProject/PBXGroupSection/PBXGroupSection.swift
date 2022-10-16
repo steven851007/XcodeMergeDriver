@@ -9,6 +9,9 @@ import Foundation
 
 @available(macOS 10.15, *)
 class PBXGroupSection: Equatable {
+    
+    static let groupSectionSeparator = Separator(begin: "/* Begin PBXGroup section */", end: "/* End PBXGroup section */")
+    
     private(set) var content: String
     private(set) var groups: [PBXGroup]
     
@@ -17,8 +20,8 @@ class PBXGroupSection: Equatable {
     }
     
     init(content: String?) throws {
-        guard let content else { throw MergeError.parsingError }
-        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let content = content?.sliceBetween(PBXGroupSection.groupSectionSeparator)?.trimmingCharacters(in: .whitespacesAndNewlines) else { throw MergeError.parsingError }
+        self.content = content
         self.groups = try self.content.components(separatedBy: "};\n").map { try PBXGroup(content: $0) }
     }
     

@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct Separator {
+    let begin: String
+    let end: String
+}
+
 @available(macOS 10.15, *)
 class XcodeProject: Equatable {
     
@@ -18,32 +23,25 @@ class XcodeProject: Equatable {
         content.contains("<<<<<<<")
     }
     
-    private let PBXBuildFileSectionSeparator = (begin: "/* Begin PBXBuildFile section */", end: "/* End PBXBuildFile section */")
-    private let PBXFileReferenceSectionSeparator = (begin: "/* Begin PBXFileReference section */", end: "/* End PBXFileReference section */")
-    private let PBXGroupSectionSeparator = (begin: "/* Begin PBXGroup section */", end: "/* End PBXGroup section */")
-    
     init(content: String) throws {
         self.content = content
-        let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxBuildFile = try PBXFileSection(content: PBXBuildFileContent, type: .build)
-        let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxfileReference = try PBXFileSection(content: PBXFileReferenceContent, type: .reference)
-        let PBXGroupSectionContent = content.slice(from: PBXGroupSectionSeparator.begin, to: PBXGroupSectionSeparator.end)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.pbxGroupSection = try PBXGroupSection(content: PBXGroupSectionContent)
+        self.pbxBuildFile = try PBXFileSection(content: self.content, type: .build)
+        self.pbxfileReference = try PBXFileSection(content: self.content, type: .reference)
+        self.pbxGroupSection = try PBXGroupSection(content: self.content)
     }
     
     func updatePbxBuildFileContent(with pbxBuildFile: PBXFileSection) {
-        let PBXBuildFileContent = content.slice(from: PBXBuildFileSectionSeparator.begin, to: PBXBuildFileSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        let PBXBuildFileContent = content.sliceBetween(PBXFileSection.buildFileSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: PBXBuildFileContent, with: pbxBuildFile.content)
     }
     
     func updatePbxFileReferenceContent(with pbxfileReference: PBXFileSection) {
-        let PBXFileReferenceContent = content.slice(from: PBXFileReferenceSectionSeparator.begin, to: PBXFileReferenceSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        let PBXFileReferenceContent = content.sliceBetween(PBXFileSection.fileReferenceSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: PBXFileReferenceContent, with: pbxfileReference.content)
     }
     
     func updatePbxGroupSectionContent(with pbxGroupSection: PBXGroupSection) {
-        let PBXGroupSectionContent = content.slice(from: PBXGroupSectionSeparator.begin, to: PBXGroupSectionSeparator.end)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        let PBXGroupSectionContent = content.sliceBetween(PBXGroupSection.groupSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: PBXGroupSectionContent, with: pbxGroupSection.content)
     }
     
@@ -82,9 +80,9 @@ class XcodeProject: Equatable {
 
 extension String {
     
-    func slice(from: String, to: String) -> Substring? {
-        return (range(of: from)?.upperBound).flatMap { substringFrom in
-            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+    func sliceBetween(_ separator: Separator) -> Substring? {
+        return (range(of: separator.begin)?.upperBound).flatMap { substringFrom in
+            (range(of: separator.end, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
                 self[substringFrom..<substringTo]
             }
         }

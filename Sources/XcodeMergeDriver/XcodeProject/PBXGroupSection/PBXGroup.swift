@@ -16,17 +16,17 @@ class PBXGroup: Equatable {
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
-    
-    private let childrenSeparator = (begin: "children = (\n", end: ");\n")
+    private let childrenSeparator = Separator(begin: "children = (\n", end: ");\n")
+    private let nameSeparator = Separator(begin: " /* ", end: " */ = {")
     
     init(content: String) throws {
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
         let children = self.content
-            .slice(from: childrenSeparator.begin, to: childrenSeparator.end)?
+            .sliceBetween(childrenSeparator)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
         self.children = try children.map { try PBXGroupChildLine(content: $0) }
-        self.name = String(self.content.slice(from: " /* ", to: " */ = {") ?? "Main")
+        self.name = String(self.content.sliceBetween(nameSeparator) ?? "Main")
     }
     
     func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {

@@ -15,6 +15,16 @@ struct PBXFileSection: Equatable {
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
+    static let buildFileSectionSeparator = Separator(begin: "/* Begin PBXBuildFile section */", end: "/* End PBXBuildFile section */")
+    static let fileReferenceSectionSeparator = Separator(begin: "/* Begin PBXFileReference section */", end: "/* End PBXFileReference section */")
+    static func separator(for type: PBXFileType) -> Separator {
+        switch type {
+        case .build:
+            return buildFileSectionSeparator
+        case .reference:
+            return fileReferenceSectionSeparator
+        }
+    }
     
     func difference(from base: PBXFileSection) -> CollectionDifference<PBXFileLine> {
         let difference = lines.difference(from: base.lines) { $0 == $1 }
@@ -30,7 +40,7 @@ struct PBXFileSection: Equatable {
     }
     
     init(content: String?, type: PBXFileType) throws {
-        guard let content else {
+        guard let content = content?.sliceBetween(Self.separator(for: type)) else {
             throw MergeError.parsingError
         }
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
