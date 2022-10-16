@@ -130,20 +130,20 @@
             path = SampleAppUITests;
             sourceTree = "<group>";
         };
-        87BBC7C028FC4B0500380008 /* Main */ = {
-            isa = PBXGroup;
-            children = (
-                87BBC77528F9E1AB00380008 /* Main.storyboard */,
-            );
-            path = Main;
-            sourceTree = "<group>";
-        };
         87BBC7BF28FC382900380008 /* BGroup */ = {
             isa = PBXGroup;
             children = (
                 87BBC7AD28F9F7FA00380008 /* BViewController.swift */,
             );
             path = BGroup;
+            sourceTree = "<group>";
+        };
+        87BBC7C028FC4B0500380008 /* Main */ = {
+            isa = PBXGroup;
+            children = (
+                87BBC77528F9E1AB00380008 /* Main.storyboard */,
+            );
+            path = Main;
             sourceTree = "<group>";
         };
 /* End PBXGroup section */

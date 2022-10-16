@@ -26,7 +26,7 @@ final class GroupAddedInBothBranchTests: XCTestCase {
         try super.tearDownWithError()
     }
     
-    func test_merge_fileAddedInBothBranch() throws {
+    func test_merge_groupAddedInBothBranch() throws {
         var driver = makeSUT()
         
         try driver.run()

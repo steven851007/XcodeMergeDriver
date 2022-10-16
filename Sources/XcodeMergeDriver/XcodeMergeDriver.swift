@@ -19,6 +19,7 @@ public struct XcodeMergeDriver: ParsableCommand {
     public init() { }
     
     mutating public func run() throws {
+        print("Merge driver launched")
         if launcehdFromXcode {
             currentFile = FileManager().currentDirectoryPath + "/" + currentFile
             baseFile = FileManager().currentDirectoryPath + "/" + baseFile
@@ -30,11 +31,13 @@ public struct XcodeMergeDriver: ParsableCommand {
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)
         let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
         
+        print("Resolving conflicts")
         try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject) {
             try Bash().run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
             return try xcodeProjectFromFile(fileName: currentFile)
         }
         
+        print("All conflicts resolved")
         try xcodeProjectToFile(currentXcodeProject, fileName: outputFile)
     }
     

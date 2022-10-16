@@ -20,13 +20,13 @@ class PBXGroup: Equatable {
     private let nameSeparator = Separator(begin: " /* ", end: " */ = {")
     
     init(content: String) throws {
-        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.content = content
         let children = self.content
             .sliceBetween(childrenSeparator)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
         self.children = try children.map { try PBXGroupChildLine(content: $0) }
-        self.name = String(self.content.sliceBetween(nameSeparator) ?? "Main")
+        self.name = String(self.content.sliceBetween(nameSeparator) ?? "")
     }
     
     func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {
