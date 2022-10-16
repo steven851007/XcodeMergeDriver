@@ -19,6 +19,7 @@ class XcodeProject: Equatable {
     var pbxBuildFile: PBXFileSection
     var pbxfileReference: PBXFileSection
     var pbxGroupSection: PBXGroupSection
+    var pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
@@ -28,6 +29,7 @@ class XcodeProject: Equatable {
         self.pbxBuildFile = try PBXFileSection(content: self.content, type: .build)
         self.pbxfileReference = try PBXFileSection(content: self.content, type: .reference)
         self.pbxGroupSection = try PBXGroupSection(content: self.content)
+        self.pbxSourcesBuildPhaseSection = try PBXSourcesBuildPhaseSection(content: self.content)
     }
     
     func updatePbxBuildFileContent(with pbxBuildFile: PBXFileSection) {
@@ -43,6 +45,11 @@ class XcodeProject: Equatable {
     func updatePbxGroupSectionContent(with pbxGroupSection: PBXGroupSection) {
         let PBXGroupSectionContent = content.sliceBetween(PBXGroupSection.groupSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: PBXGroupSectionContent, with: pbxGroupSection.content)
+    }
+    
+    func updatePbxSourcesBuildPhaseSectionContent(with pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection) {
+        let PBXSourcesBuildPhaseSectionContent = content.sliceBetween(PBXSourcesBuildPhaseSection.sourcesBuildPhaseSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXSourcesBuildPhaseSectionContent, with: pbxSourcesBuildPhaseSection.content)
     }
     
     func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
@@ -65,6 +72,12 @@ class XcodeProject: Equatable {
             try pbxGroupSection.mergeChanges(from: base.pbxGroupSection, to: other.pbxGroupSection, merged: merged.pbxGroupSection)
             updatePbxGroupSectionContent(with: pbxGroupSection)
             merged.updatePbxGroupSectionContent(with: pbxGroupSection)
+        }
+        
+        if merged.pbxSourcesBuildPhaseSection.hasConflict {
+            try pbxSourcesBuildPhaseSection.mergeChanges(from: base.pbxSourcesBuildPhaseSection, to: other.pbxSourcesBuildPhaseSection, merged: merged.pbxSourcesBuildPhaseSection)
+            updatePbxSourcesBuildPhaseSectionContent(with: pbxSourcesBuildPhaseSection)
+            merged.updatePbxSourcesBuildPhaseSectionContent(with: pbxSourcesBuildPhaseSection)
         }
         
         if merged.hasConflict {

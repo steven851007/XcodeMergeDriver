@@ -14,14 +14,17 @@ public struct XcodeMergeDriver: ParsableCommand {
     var otherFile: String
     
     var outputFile: String?
+    var launcehdFromXcode: Bool = false
     
     public init() { }
     
     mutating public func run() throws {
-        let currentFile = FileManager().currentDirectoryPath + currentFile
-        let baseFile = FileManager().currentDirectoryPath + baseFile
-        let otherFile = FileManager().currentDirectoryPath + otherFile
-        let outputFile = FileManager().currentDirectoryPath + (outputFile ?? currentFile)
+        if launcehdFromXcode {
+            currentFile = FileManager().currentDirectoryPath + "/" + currentFile
+            baseFile = FileManager().currentDirectoryPath + "/" + baseFile
+            otherFile = FileManager().currentDirectoryPath + "/" + otherFile
+        }
+        let outputFile = FileManager().currentDirectoryPath + "/" + (outputFile ?? currentFile)
         
         let currentXcodeProject = try xcodeProjectFromFile(fileName: currentFile)
         let baseXcodeProject = try xcodeProjectFromFile(fileName: baseFile)

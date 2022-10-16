@@ -40,6 +40,7 @@ final class FileAddedInBothBranchTests: XCTestCase {
         driver.baseFile = filePath + "base"
         driver.otherFile = filePath + "other"
         driver.outputFile = filePath + "output"
+        driver.launcehdFromXcode = true
         
         return driver
     }
