@@ -11,7 +11,7 @@ import Foundation
 class PBXSourcesBuildPhase: Equatable {
     
     private(set) var content: String
-    private(set) var files: [PBXGroupChildLine]
+    private(set) var files: [String]
     
     var hasConflict: Bool {
         content.contains("<<<<<<<")
@@ -21,24 +21,23 @@ class PBXSourcesBuildPhase: Equatable {
     
     init(content: String) throws {
         self.content = content
-        let files = self.content
+        self.files = self.content
             .sliceBetween(filesSeparator)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
-        self.files = try files.map { try PBXGroupChildLine(content: $0) }
     }
     
-    func difference(from base: PBXSourcesBuildPhase) -> CollectionDifference<PBXGroupChildLine> {
+    func difference(from base: PBXSourcesBuildPhase) -> CollectionDifference<String> {
         let difference = files.difference(from: base.files) { $0 == $1 }
         return difference
     }
     
     @discardableResult
-    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
+    func applying(_ difference: CollectionDifference<String>) -> String {
         let oldContent = content
-        let oldFiles = files.map { $0.content }.joined(separator: "\n")
+        let oldFiles = files.map { $0 }.joined(separator: "\n")
         files = files.equalityApplying(difference)
-        let newFiles = files.map { $0.content }.joined(separator: "\n")
+        let newFiles = files.map { $0 }.joined(separator: "\n")
         content = content.replacingOccurrences(of: oldFiles, with: newFiles)
         return oldContent
     }

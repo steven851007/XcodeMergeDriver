@@ -22,7 +22,7 @@ struct PBXFileSection: Equatable {
     }
     
     private(set) var content: String
-    private(set) var lines: [PBXFileLine]
+    private(set) var lines: [String]
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
@@ -32,17 +32,17 @@ struct PBXFileSection: Equatable {
             throw MergeError.parsingError
         }
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.lines = self.content.split(separator: "\n").map { PBXFileLine(lineString: String($0)) }
+        self.lines = self.content.split(separator: "\n").map { String($0) }
     }
     
-    func difference(from base: PBXFileSection) -> CollectionDifference<PBXFileLine> {
+    func difference(from base: PBXFileSection) -> CollectionDifference<String> {
         let difference = lines.difference(from: base.lines) { $0 == $1 }
         return difference
     }
     
-    mutating func applying(_ difference: CollectionDifference<PBXFileLine>) {
+    mutating func applying(_ difference: CollectionDifference<String>) {
         lines = lines.equalityApplying(difference)
-        content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        content = lines.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     static func == (lhs: Self, rhs: Self) -> Bool {

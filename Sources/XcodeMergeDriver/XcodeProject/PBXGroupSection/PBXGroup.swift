@@ -11,7 +11,7 @@ import Foundation
 class PBXGroup: Equatable, Hashable {
     
     private(set) var content: String
-    private(set) var children: [PBXGroupChildLine]
+    private(set) var children: [String]
     let identifier: String
     let name: String
     var hasConflict: Bool {
@@ -22,26 +22,25 @@ class PBXGroup: Equatable, Hashable {
     
     init(content: String) throws {
         self.content = content
-        let children = self.content
+        self.children = self.content
             .sliceBetween(childrenSeparator)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
-        self.children = try children.map { try PBXGroupChildLine(content: $0) }
         self.name = String(self.content.sliceBetween(nameSeparator) ?? "")
         self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {
+    func difference(from base: PBXGroup) -> CollectionDifference<String> {
         let difference = children.difference(from: base.children) { $0 == $1 }
         return difference
     }
 
     @discardableResult
-    func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
+    func applying(_ difference: CollectionDifference<String>) -> String {
         let oldContent = content
-        let oldChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        let oldChildren = children.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
         children = children.equalityApplying(difference)
-        let newChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        let newChildren = children.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: oldChildren, with: newChildren)
         return oldContent
     }
