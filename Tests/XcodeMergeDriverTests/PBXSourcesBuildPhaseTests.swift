@@ -23,7 +23,7 @@ final class PBXSourcesBuildPhaseTests: XCTestCase {
         }
         
         XCTAssertEqual(base.buildPhases.count, 3)
-        XCTAssertEqual(base.buildPhases.first?.files.first, try PBXGroupChildLine(content: " /* ViewController.swift in Sources */,"))
+        XCTAssertEqual(base.buildPhases.first?.files.first, try PBXGroupChildLine(content: "87BBC77428F9E1AB00380008 /* ViewController.swift in Sources */,"))
     }
     
     func test_hasConflict() throws {

@@ -21,7 +21,7 @@ final class PBXGroupSectionTests: XCTestCase {
         }
         
         XCTAssertEqual(base.groups.count, 5)
-        XCTAssertEqual(base.groups.first?.children.first, try PBXGroupChildLine(content: " /* SampleApp */,"))
+        XCTAssertEqual(base.groups.first?.children.first, try PBXGroupChildLine(content: "87BBC76E28F9E1AB00380008 /* SampleApp */,"))
     }
     
     func test_hasConflict() throws {

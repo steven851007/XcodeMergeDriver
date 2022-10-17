@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PBXGroupChildLine: Equatable {
+class PBXGroupChildLine: Equatable, Hashable {
     let content: String
     let fileName: String
     private let nameSeparator = Separator(begin: " /* ", end: " */,")
@@ -19,7 +19,11 @@ class PBXGroupChildLine: Equatable {
     }
     
     static func == (lhs: PBXGroupChildLine, rhs: PBXGroupChildLine) -> Bool {
-        lhs.fileName == rhs.fileName
+        lhs.content == rhs.content
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(content)
     }
 }
 

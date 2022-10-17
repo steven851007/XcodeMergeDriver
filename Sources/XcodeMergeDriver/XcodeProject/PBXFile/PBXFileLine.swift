@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PBXFileLine: Equatable {
+struct PBXFileLine: Equatable, Hashable {
     
     let lineString: String
     let comparableValue: String

@@ -54,4 +54,8 @@ struct PBXFileSection: Equatable {
         }
         content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        Set(lhs.lines).symmetricDifference(Set(rhs.lines)).isEmpty
+    }
 }

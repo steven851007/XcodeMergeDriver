@@ -38,14 +38,14 @@ class PBXGroupSection: Equatable {
     }
     
     func mergeChanges(from base: PBXGroupSection, to other: PBXGroupSection, merged: PBXGroupSection) throws {
-        let difference = other.groups.difference(from: base.groups) { $0.name == $1.name }
+        let difference = other.groups.difference(from: base.groups) { $0.name == $1.name && $0.identifier == $1.identifier }
         let compbinedGroups = try applyGroupDifference(difference)
         
         compbinedGroups.forEach { conflictGroup in
             if
-               let sameBaseGroup = base.groupWithName(conflictGroup.name),
-               let sameOtherGroup = other.groupWithName(conflictGroup.name),
-               let sameCurrentGroup = groupWithName(conflictGroup.name)
+               let sameBaseGroup = base.groupWith(identifier: conflictGroup.identifier, name: conflictGroup.name),
+               let sameOtherGroup = other.groupWith(identifier: conflictGroup.identifier, name: conflictGroup.name),
+               let sameCurrentGroup = groupWith(identifier: conflictGroup.identifier, name: conflictGroup.name)
             {
                 let difference = sameOtherGroup.difference(from: sameBaseGroup)
                 if !difference.isEmpty {
@@ -56,11 +56,11 @@ class PBXGroupSection: Equatable {
         }
     }
     
-    func groupWithName(_ name: String) -> PBXGroup? {
-        groups.first { $0.name == name }
+    func groupWith(identifier: String, name: String) -> PBXGroup? {
+        groups.first { $0.identifier == identifier && $0.name == name }
     }
     
     static func == (lhs: PBXGroupSection, rhs: PBXGroupSection) -> Bool {
-        lhs.content == rhs.content
+        Set(lhs.groups).symmetricDifference(Set(rhs.groups)).isEmpty
     }
 }

@@ -8,10 +8,11 @@
 import Foundation
 
 @available(macOS 10.15, *)
-class PBXGroup: Equatable {
+class PBXGroup: Equatable, Hashable {
     
     private(set) var content: String
     private(set) var children: [PBXGroupChildLine]
+    let identifier: String
     let name: String
     var hasConflict: Bool {
         content.contains("<<<<<<<")
@@ -27,6 +28,7 @@ class PBXGroup: Equatable {
             .components(separatedBy: "\n") ?? []
         self.children = try children.map { try PBXGroupChildLine(content: $0) }
         self.name = String(self.content.sliceBetween(nameSeparator) ?? "")
+        self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines) // 87BBC76D28F9E1AB00380008 /*
     }
     
     func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {
@@ -55,6 +57,13 @@ class PBXGroup: Equatable {
     }
     
     static func == (lhs: PBXGroup, rhs: PBXGroup) -> Bool {
-        lhs.content == rhs.content
+        lhs.name == rhs.name &&
+        lhs.identifier == rhs.identifier &&
+        Set(lhs.children).symmetricDifference(Set(rhs.children)).isEmpty
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(identifier)
     }
 }
