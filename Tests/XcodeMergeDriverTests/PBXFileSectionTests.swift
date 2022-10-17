@@ -15,8 +15,7 @@ final class PBXFileSectionTests: XCTestCase {
         var current = try PBXFileSection(content: currentBuildFile, type: .build)
         let other = try PBXFileSection(content: otherBuildFile, type: .build)
         
-        let otherChangeset = other.difference(from: base)
-        current.applying(otherChangeset)
+        current.applyingDifference(between: base, other: other)
         
         XCTAssertEqual(current, try PBXFileSection(content: resolvedBuildFile, type: .build))
     }
@@ -26,8 +25,7 @@ final class PBXFileSectionTests: XCTestCase {
         var current = try PBXFileSection(content: currentReferenceFile, type: .reference)
         let other = try PBXFileSection(content: otherReferenceFile, type: .reference)
         
-        let otherChangeset = other.difference(from: base)
-        current.applying(otherChangeset)
+        current.applyingDifference(between: base, other: other)
         
         XCTAssertEqual(current, try PBXFileSection(content: resolvedReferenceFile, type: .reference))
     }
@@ -37,8 +35,7 @@ final class PBXFileSectionTests: XCTestCase {
         var current = try PBXFileSection(content: otherDeletedFile, type: .reference)
         let other = try PBXFileSection(content: currentDeletedFile, type: .reference)
         
-        let otherChangeset = other.difference(from: base)
-        current.applying(otherChangeset)
+        current.applyingDifference(between: base, other: other)
         
         XCTAssertEqual(current, try PBXFileSection(content: resolvedDeletedFile, type: .reference))
     }

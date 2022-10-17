@@ -16,10 +16,10 @@ struct Separator {
 class XcodeProject: Equatable {
     
     private(set) var content: String
-    var pbxBuildFile: PBXFileSection
-    var pbxfileReference: PBXFileSection
-    var pbxGroupSection: PBXGroupSection
-    var pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection
+    private(set) var pbxBuildFile: PBXFileSection
+    private(set) var pbxfileReference: PBXFileSection
+    private(set) var pbxGroupSection: PBXGroupSection
+    private(set) var pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection
     var hasConflict: Bool {
         content.contains("<<<<<<<")
     }
@@ -32,37 +32,15 @@ class XcodeProject: Equatable {
         self.pbxSourcesBuildPhaseSection = try PBXSourcesBuildPhaseSection(content: self.content)
     }
     
-    func updatePbxBuildFileContent(with pbxBuildFile: PBXFileSection) {
-        let PBXBuildFileContent = content.sliceBetween(PBXFileSection.buildFileSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
-        content = content.replacingOccurrences(of: PBXBuildFileContent, with: pbxBuildFile.content)
-    }
-    
-    func updatePbxFileReferenceContent(with pbxfileReference: PBXFileSection) {
-        let PBXFileReferenceContent = content.sliceBetween(PBXFileSection.fileReferenceSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
-        content = content.replacingOccurrences(of: PBXFileReferenceContent, with: pbxfileReference.content)
-    }
-    
-    func updatePbxGroupSectionContent(with pbxGroupSection: PBXGroupSection) {
-        let PBXGroupSectionContent = content.sliceBetween(PBXGroupSection.groupSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
-        content = content.replacingOccurrences(of: PBXGroupSectionContent, with: pbxGroupSection.content)
-    }
-    
-    func updatePbxSourcesBuildPhaseSectionContent(with pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection) {
-        let PBXSourcesBuildPhaseSectionContent = content.sliceBetween(PBXSourcesBuildPhaseSection.sourcesBuildPhaseSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
-        content = content.replacingOccurrences(of: PBXSourcesBuildPhaseSectionContent, with: pbxSourcesBuildPhaseSection.content)
-    }
-    
     func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
         let merged = try merged()
         if merged.pbxBuildFile.hasConflict {
-            let difference = other.pbxBuildFile.difference(from: base.pbxBuildFile)
-            pbxBuildFile.applying(difference)
+            pbxBuildFile.applyingDifference(between: base.pbxBuildFile, other: other.pbxBuildFile)
             merged.updatePbxBuildFileContent(with: pbxBuildFile)
         }
         
         if merged.pbxfileReference.hasConflict {
-            let difference = other.pbxfileReference.difference(from: base.pbxfileReference)
-            pbxfileReference.applying(difference)
+            pbxfileReference.applyingDifference(between: base.pbxfileReference, other: other.pbxfileReference)
             merged.updatePbxFileReferenceContent(with: pbxfileReference)
         }
         
@@ -85,6 +63,30 @@ class XcodeProject: Equatable {
     
     static func == (lhs: XcodeProject, rhs: XcodeProject) -> Bool {
         lhs.content == rhs.content
+    }
+}
+
+@available(macOS 10.15, *)
+private extension XcodeProject {
+    
+    func updatePbxBuildFileContent(with pbxBuildFile: PBXFileSection) {
+        let PBXBuildFileContent = content.sliceBetween(PBXFileSection.buildFileSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXBuildFileContent, with: pbxBuildFile.content)
+    }
+    
+    func updatePbxFileReferenceContent(with pbxfileReference: PBXFileSection) {
+        let PBXFileReferenceContent = content.sliceBetween(PBXFileSection.fileReferenceSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXFileReferenceContent, with: pbxfileReference.content)
+    }
+    
+    func updatePbxGroupSectionContent(with pbxGroupSection: PBXGroupSection) {
+        let PBXGroupSectionContent = content.sliceBetween(PBXGroupSection.groupSectionSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXGroupSectionContent, with: pbxGroupSection.content)
+    }
+    
+    func updatePbxSourcesBuildPhaseSectionContent(with pbxSourcesBuildPhaseSection: PBXSourcesBuildPhaseSection) {
+        let PBXSourcesBuildPhaseSectionContent = content.sliceBetween(PBXSourcesBuildPhaseSection.sourcesBuildPhaseSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: PBXSourcesBuildPhaseSectionContent, with: pbxSourcesBuildPhaseSection.content)
     }
 }
 

@@ -35,12 +35,8 @@ struct PBXFileSection: Equatable {
         self.lines = self.content.split(separator: "\n").map { String($0) }
     }
     
-    func difference(from base: PBXFileSection) -> CollectionDifference<String> {
-        let difference = lines.difference(from: base.lines) { $0 == $1 }
-        return difference
-    }
-    
-    mutating func applying(_ difference: CollectionDifference<String>) {
+    mutating func applyingDifference(between base: PBXFileSection, other: PBXFileSection) {
+        let difference = other.lines.difference(from: base.lines) { $0 == $1 }
         lines = lines.equalityApplying(difference)
         content = lines.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }

@@ -30,19 +30,16 @@ class PBXGroup: Equatable, Hashable {
         self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    func difference(from base: PBXGroup) -> CollectionDifference<String> {
-        let difference = children.difference(from: base.children) { $0 == $1 }
-        return difference
-    }
-
-    @discardableResult
-    func applying(_ difference: CollectionDifference<String>) -> String {
-        let oldContent = content
-        let oldChildren = children.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+    func applyingDifference(between base: PBXGroup, other: PBXGroup) {
+        let difference = other.children.difference(from: base.children) { $0 == $1 }
         children = children.equalityApplying(difference)
-        let newChildren = children.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-        content = content.replacingOccurrences(of: oldChildren, with: newChildren)
-        return oldContent
+        updateChildrenContent()
+    }
+    
+    private func updateChildrenContent() {
+        let oldChildrenContent = content.sliceBetween(childrenSeparator)!.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newChildrenContent = children.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+        content = content.replacingOccurrences(of: oldChildrenContent, with: newChildrenContent)
     }
     
     static func == (lhs: PBXGroup, rhs: PBXGroup) -> Bool {
