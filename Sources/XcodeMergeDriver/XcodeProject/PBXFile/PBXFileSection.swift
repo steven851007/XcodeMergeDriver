@@ -32,7 +32,7 @@ struct PBXFileSection: Equatable {
             throw MergeError.parsingError
         }
         self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
-        self.lines = self.content.split(separator: "\n").map { PBXFileLine(lineString: String($0), type: type) }
+        self.lines = self.content.split(separator: "\n").map { PBXFileLine(lineString: String($0)) }
     }
     
     func difference(from base: PBXFileSection) -> CollectionDifference<PBXFileLine> {

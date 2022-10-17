@@ -28,7 +28,7 @@ class PBXGroup: Equatable, Hashable {
             .components(separatedBy: "\n") ?? []
         self.children = try children.map { try PBXGroupChildLine(content: $0) }
         self.name = String(self.content.sliceBetween(nameSeparator) ?? "")
-        self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines) // 87BBC76D28F9E1AB00380008 /*
+        self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     func difference(from base: PBXGroup) -> CollectionDifference<PBXGroupChildLine> {

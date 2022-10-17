@@ -9,13 +9,10 @@ import Foundation
 
 class PBXGroupChildLine: Equatable, Hashable {
     let content: String
-    let fileName: String
-    private let nameSeparator = Separator(begin: " /* ", end: " */,")
     
     init(content: String?) throws {
         guard let content else { throw MergeError.parsingError }
         self.content = content
-        self.fileName = String(content.sliceBetween(nameSeparator) ?? "")
     }
     
     static func == (lhs: PBXGroupChildLine, rhs: PBXGroupChildLine) -> Bool {
