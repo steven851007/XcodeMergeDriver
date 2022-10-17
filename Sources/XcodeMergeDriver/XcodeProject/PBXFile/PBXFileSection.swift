@@ -41,17 +41,7 @@ struct PBXFileSection: Equatable {
     }
     
     mutating func applying(_ difference: CollectionDifference<PBXFileLine>) {
-        difference.forEach { change in
-            switch change {
-              case let .remove(_, element, _):
-                if let index = lines.firstIndex(of: element) {
-                    lines.remove(at: index)
-                }
-              case let .insert(offset, newElement, _):
-                let index = offset > lines.endIndex ? lines.endIndex : offset
-                lines.insert(newElement, at: index)
-              }
-        }
+        lines = lines.equalityApplying(difference)
         content = lines.map { $0.lineString }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     

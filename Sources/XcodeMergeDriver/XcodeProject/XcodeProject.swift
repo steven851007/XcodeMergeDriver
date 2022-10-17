@@ -99,3 +99,23 @@ extension String {
         }
     }
 }
+
+@available(macOS 10.15, *)
+extension Array where Element: Equatable {
+ 
+    func equalityApplying(_ difference: CollectionDifference<Element>) -> Array<Element> {
+        var array = self
+        difference.forEach { change in
+            switch change {
+              case let .remove(_, element, _):
+                if let index = array.firstIndex(of: element) {
+                    array.remove(at: index)
+                }
+              case let .insert(offset, newElement, _):
+                let index = offset > array.endIndex ? array.endIndex : offset
+                array.insert(newElement, at: index)
+              }
+        }
+        return array
+    }
+}

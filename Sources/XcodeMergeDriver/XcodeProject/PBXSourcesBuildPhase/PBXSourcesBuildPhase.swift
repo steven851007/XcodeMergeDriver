@@ -37,18 +37,7 @@ class PBXSourcesBuildPhase: Equatable {
     func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
         let oldContent = content
         let oldFiles = files.map { $0.content }.joined(separator: "\n")
-        difference.forEach { change in
-            switch change {
-              case let .remove(_, element, _):
-                if let index = files.firstIndex(of: element) {
-                    files.remove(at: index)
-                }
-              case let .insert(offset, newElement, _):
-                let index = offset > files.endIndex ? files.endIndex : offset
-                files.insert(newElement, at: index)
-              }
-        }
-        
+        files = files.equalityApplying(difference)
         let newFiles = files.map { $0.content }.joined(separator: "\n")
         content = content.replacingOccurrences(of: oldFiles, with: newFiles)
         return oldContent

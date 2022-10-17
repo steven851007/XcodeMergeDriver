@@ -40,17 +40,7 @@ class PBXGroup: Equatable, Hashable {
     func applying(_ difference: CollectionDifference<PBXGroupChildLine>) -> String {
         let oldContent = content
         let oldChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
-        difference.forEach { change in
-            switch change {
-              case let .remove(_, element, _):
-                if let index = children.firstIndex(of: element) {
-                    children.remove(at: index)
-                }
-              case let .insert(offset, newElement, _):
-                let index = offset > children.endIndex ? children.endIndex : offset
-                children.insert(newElement, at: index)
-              }
-        }
+        children = children.equalityApplying(difference)
         let newChildren = children.map { $0.content }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
         content = content.replacingOccurrences(of: oldChildren, with: newChildren)
         return oldContent
