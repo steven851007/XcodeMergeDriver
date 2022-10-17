@@ -25,23 +25,22 @@ class PBXGroupSection: Equatable {
         self.groups = try self.content
             .components(separatedBy: "};")
             .filter { !$0.isEmpty }
-            .map { try PBXGroup(content: $0) }
+            .map { try PBXGroup(content: $0.appending("};")) }
     }
     
-    func mergeChanges(from base: PBXGroupSection, to other: PBXGroupSection, merged: PBXGroupSection) throws {
-        let allGroups = try applyGroupDifference(between: base, other: other)
+    func mergeChanges(from base: PBXGroupSection, to other: PBXGroupSection, merged: PBXGroupSection) {
+        groups = applyGroupDifference(between: base, other: other)
         
-        for group in allGroups {
+        for group in groups {
             guard
                 let baseGroup = base.groupMatching(group),
                 let otherGroup = other.groupMatching(group),
                 let currentGroup = groupMatching(group) else {
                 continue
             }
-            let oldGroupContent = currentGroup.content
             currentGroup.applyingDifference(between: baseGroup, other: otherGroup)
-            content = content.replacingOccurrences(of: oldGroupContent, with: currentGroup.content)
         }
+        content = groups.map { $0.content }.joined()
     }
     
     static func == (lhs: PBXGroupSection, rhs: PBXGroupSection) -> Bool {
@@ -52,14 +51,9 @@ class PBXGroupSection: Equatable {
 @available(macOS 10.15, *)
 private extension PBXGroupSection {
 
-    func applyGroupDifference(between base: PBXGroupSection, other: PBXGroupSection) throws -> [PBXGroup] {
+    func applyGroupDifference(between base: PBXGroupSection, other: PBXGroupSection) -> [PBXGroup] {
         let difference = other.groups.difference(from: base.groups) { $0.name == $1.name && $0.identifier == $1.identifier }
-        guard let compbinedGroups = groups.applying(difference) else {
-            throw MergeError.unsupported
-        }
-        
-        content = compbinedGroups.map { $0.content }.joined(separator: "};").appending("};")
-        return compbinedGroups
+        return groups.equalityApplying(difference)
     }
     
     func groupMatching(_ group: PBXGroup) -> PBXGroup? {

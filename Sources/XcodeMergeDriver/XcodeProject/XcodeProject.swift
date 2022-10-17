@@ -45,7 +45,7 @@ class XcodeProject: Equatable {
         }
         
         if merged.pbxGroupSection.hasConflict {
-            try pbxGroupSection.mergeChanges(from: base.pbxGroupSection, to: other.pbxGroupSection, merged: merged.pbxGroupSection)
+            pbxGroupSection.mergeChanges(from: base.pbxGroupSection, to: other.pbxGroupSection, merged: merged.pbxGroupSection)
             merged.updatePbxGroupSectionContent(with: pbxGroupSection)
         }
         
