@@ -37,7 +37,6 @@ public struct XcodeMergeDriver: ParsableCommand {
             return try xcodeProjectFromFile(fileName: currentFile)
         }
         
-        print("All conflicts resolved")
         try xcodeProjectToFile(currentXcodeProject, fileName: outputFile)
     }
     

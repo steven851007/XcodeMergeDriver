@@ -28,12 +28,12 @@ final class XcodeProjectTests: XCTestCase {
         XCTAssert(conflictProject.pbxBuildFile.hasConflict)
     }
     
-    func test_merge_throwsWithConflictsNotSupported() throws {
+    func test_merge_doesntThrowsWhenFileStillHasConflicts() throws {
         let baseProject = try XcodeProject(content: base)
         let otherProject = try XcodeProject(content: other)
         let currentProject = try XcodeProject(content: current)
         
-        XCTAssertThrowsError(try currentProject.mergeChanges(from: baseProject, to: otherProject) {
+        XCTAssertNoThrow(try currentProject.mergeChanges(from: baseProject, to: otherProject) {
             try XcodeProject(content: unsupported)
         })
     }

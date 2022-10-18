@@ -55,7 +55,9 @@ class XcodeProject: Equatable {
         }
         
         if merged.hasConflict {
-            throw MergeError.unsupported // File still has conflicts
+            print("Resolved conflicts, but couldn't resolve all. Please check!")
+        } else {
+            print("All conflicts resolved")
         }
         
         content = merged.content
