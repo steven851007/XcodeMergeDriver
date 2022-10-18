@@ -1,10 +1,6 @@
 // !$*UTF8*$!
 {
-<<<<<<< /Users/istvanbalogh/XcodeMergeDriver//Tests/XcodeMergeDriverTests/EndToEnd/GroupAddedInBothBranch/current
-    archiveVersion = 2;
-=======
-    archiveVersion = 3;
->>>>>>> /Users/istvanbalogh/XcodeMergeDriver//Tests/XcodeMergeDriverTests/EndToEnd/GroupAddedInBothBranch/other
+    archiveVersion = 1;
     classes = {
     };
     objectVersion = 56;

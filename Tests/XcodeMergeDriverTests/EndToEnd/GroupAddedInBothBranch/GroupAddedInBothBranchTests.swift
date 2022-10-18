@@ -31,7 +31,19 @@ final class GroupAddedInBothBranchTests: XCTestCase {
         
         try driver.run()
         
+        let resolved = try xcodeProjectFromFile(fileName: resolvedPath)
+        let output = try xcodeProjectFromFile(fileName: outputPath)
+        XCTAssertEqual(resolved.pbxBuildFile, output.pbxBuildFile, "Resolved pbxBuildFile different from output pbxBuildFile")
+        XCTAssertEqual(resolved.pbxfileReference, output.pbxfileReference, "Resolved pbxfileReference different from output pbxfileReference")
+        XCTAssertEqual(resolved.pbxGroupSection, output.pbxGroupSection, "Resolved pbxGroupSection different from output pbxGroupSection")
+        XCTAssertEqual(resolved.content, output.content, "Resolved content different from output content")
         XCTAssert(FileManager().contentsEqual(atPath: resolvedPath, andPath: outputPath))
+    }
+    
+    func xcodeProjectFromFile(fileName: String) throws -> XcodeProject {
+        let fileURL = URL(fileURLWithPath: fileName)
+        let fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+        return try XcodeProject(content: fileContent)
     }
     
     private func makeSUT() -> XcodeMergeDriver {
