@@ -37,7 +37,7 @@ final class PBXGroupSectionTests: XCTestCase {
         let other = try PBXGroupSection(content: otherGroup)
         let conflict = try PBXGroupSection(content: conflictGroup)
 
-        try current.mergeChanges(from: base, to: other, merged: conflict)
+        current.mergeChanges(from: base, to: other, merged: conflict)
 
         XCTAssertEqual(current, try PBXGroupSection(content: resolvedGroup))
     }
@@ -48,7 +48,7 @@ final class PBXGroupSectionTests: XCTestCase {
         let other = try PBXGroupSection(content: otherGroupAdded)
         let conflict = try PBXGroupSection(content: conflictGroupAdded)
 
-        try current.mergeChanges(from: base, to: other, merged: conflict)
+        current.mergeChanges(from: base, to: other, merged: conflict)
 
         XCTAssertEqual(current.content, try PBXGroupSection(content: resolvedGroupAdded).content)
     }
