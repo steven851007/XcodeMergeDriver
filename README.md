@@ -2,6 +2,8 @@
 XcodeMergeDriver: Automatically resolve conflicts in your Xcode project files
 =================================================
 
+![example workflow](https://github.com/steven851007/XcodeMergeDriver/actions/workflows/swift.yml/badge.svg)
+
 Table of contents
 -----------------
 
@@ -17,19 +19,21 @@ Table of contents
 Introduction
 ------------
 
-Xcode Merge Driver is a tool to automatically and correctly resolves git conflicts in Xcode project files (.pbxproj) when we merge a branch. When a project has regular feature branch merges, these conflicts happen almost after every merge due to how Xcode manages the project file. Depending on the number of changes resolving these conflicts is not always straightforward, and it's a repetitive task. 
+Xcode Merge Driver is a tool that automatically resolves git conflicts in Xcode project files (.pbxproj). When a project has regular feature branch merges, these conflicts happen almost after every merge due to how Xcode manages the project file. Depending on the number of changes resolving these conflicts is not always straightforward, and it's a repetitive task. 
 
-When a merge happens where there is a conflict, Xcode Merge Drive analyses the changes in the current and merged branches and resolves the conflicts correctly since it knows the structure of a valid project file.
+When a merge happens with a conflict, Xcode Merge Drive will launch and analyses the changes. First, it takes the changeset in the current branch compared to the base version. Then it takes the changset between the base branch and the other branch and merges these two changesets into one, respecting the logical structure of the project file. This merge strategy ensures that it resolves all conflicts correctly and generates a valid project file.
 
 
 Installation
 ------------
 
-Xcode Merge Driver is a git-merge-driver that git will call automatically when a conflict occurs in the .pbxproj file.
+Xcode Merge Driver is a git-merge-driver that git will call automatically when a conflict occurs in the .pbxproj file. For that, we have to integrate it with git. We can do this in three steps:
 
-For that we have to do two steps:
+1: Download the latest version from the [Release page](https://github.com/steven851007/XcodeMergeDriver/releases) and put the XcodeMergeDriver executable into your project folder.
 
-1: Define XcodeMergeDriver as a custom merge driver. We can do this in the .git/config file:
+- Alternatively, check out the project and build it on your local machine
+
+2: Define XcodeMergeDriver as a custom merge driver. We can do this in the .git/config file:
 
 ```gitconfig
 [merge "XcodeMergeDriver"]
@@ -49,7 +53,7 @@ The `driver` variable is used to construct a command to run the merge driver. Ou
 The order of the parameters is important.
 You can read more about how to define a custom merge driver in the [official documentation](https://git-scm.com/docs/gitattributes#_defining_a_custom_merge_driver)
 
-2: Update the .gitattributes file
+3: Update the .gitattributes file
 
 In the project .gitattributes file, we have to define to run this merge driver for the .pbxproj files:
 ```gitattributes
@@ -63,7 +67,7 @@ Git will run the merge driver automatically when a conflict occurs in the .pbxpr
 
 ![](git-merge.gif)
 
-Xcode Merge Driver exits with code 0 if it successfully resolved the conflicts and with code 1 if the merge went awry. It will also exit with code 1 if it detects conflicts it can't fix. If a failure occurs, the script will leave all conflicts in the current version file, where you can resolve them manually. In case of success, the merged result will be in the file passed as the current version. 
+Xcode Merge Driver exits with code 0 if it successfully resolved the conflicts and with code 1 if the merge went awry. If a failure occurs, the script will leave all conflicts in the current version file, where you can resolve them manually. In case of success, the merged result will be in the file passed as the current version. 
 
 Known issues and limitations
 ----------------------------
