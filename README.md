@@ -1,8 +1,7 @@
 
 XcodeMergeDriver: Automatically resolve conflicts in your Xcode project files
 =================================================
-
-![example workflow](https://github.com/steven851007/XcodeMergeDriver/actions/workflows/swift.yml/badge.svg)
+[![Swift](https://github.com/steven851007/XcodeMergeDriver/actions/workflows/swift.yml/badge.svg)](https://github.com/steven851007/XcodeMergeDriver/actions/workflows/swift.yml)
 
 Table of contents
 -----------------
