@@ -22,17 +22,18 @@ class PBXGroup: Equatable, Hashable {
     
     init(content: String) throws {
         self.content = content
-        self.children = self.content
+        let children = self.content
             .sliceBetween(childrenSeparator)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
             .components(separatedBy: "\n") ?? []
+        self.children = children
+            .filter({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
         self.name = String(self.content.sliceBetween(nameSeparator) ?? "")
         self.identifier = self.content.components(separatedBy: " /*").first!.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     func applyingDifference(between base: PBXGroup, other: PBXGroup) {
         let difference = other.children.difference(from: base.children) { $0 == $1 }
-        children = children.equalityApplying(difference)
+        children = children.equalityApplying(difference).uniqued()
         updateChildrenContent()
     }
     
