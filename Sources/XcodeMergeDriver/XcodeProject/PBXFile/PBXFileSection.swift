@@ -31,13 +31,13 @@ struct PBXFileSection: Equatable {
         guard let content = content?.sliceBetween(Self.separator(for: type)) else {
             throw MergeError.parsingError
         }
-        self.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.content = content.trimmingCharacters(in: .newlines)
         self.lines = self.content.split(separator: "\n").map { String($0) }
     }
     
     mutating func applyingDifference(between base: PBXFileSection, other: PBXFileSection) {
         let difference = other.lines.difference(from: base.lines) { $0 == $1 }
-        lines = lines.equalityApplying(difference)
+        lines = lines.equalityApplying(difference).uniqued()
         content = lines.map { $0 }.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
