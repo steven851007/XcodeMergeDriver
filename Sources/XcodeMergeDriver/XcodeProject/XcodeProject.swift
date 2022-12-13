@@ -32,7 +32,7 @@ class XcodeProject: Equatable {
         self.pbxSourcesBuildPhaseSection = try PBXSourcesBuildPhaseSection(content: self.content)
     }
     
-    func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws {
+    func mergeChanges(from base: XcodeProject, to other: XcodeProject, merged: () throws -> XcodeProject) throws -> Bool {
         let merged = try merged()
         if merged.pbxBuildFile.hasConflict {
             pbxBuildFile.applyingDifference(between: base.pbxBuildFile, other: other.pbxBuildFile)
@@ -61,6 +61,7 @@ class XcodeProject: Equatable {
         }
         
         content = merged.content
+        return merged.hasConflict
     }
     
     static func == (lhs: XcodeProject, rhs: XcodeProject) -> Bool {
