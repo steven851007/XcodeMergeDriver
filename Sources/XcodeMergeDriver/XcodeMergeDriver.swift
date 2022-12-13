@@ -32,12 +32,16 @@ public struct XcodeMergeDriver: ParsableCommand {
         let otherXcodeProject = try xcodeProjectFromFile(fileName: otherFile)
         
         print("Resolving conflicts")
-        try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject) {
+        let stillHasConflict = try currentXcodeProject.mergeChanges(from: baseXcodeProject, to: otherXcodeProject) {
             try Bash().run(commandName: "git", arguments: ["merge-file", currentFile, baseFile, otherFile])
             return try xcodeProjectFromFile(fileName: currentFile)
         }
         
         try xcodeProjectToFile(currentXcodeProject, fileName: outputFile)
+        
+        if stillHasConflict {
+            throw MergeError.unsupported
+        }
     }
     
     
